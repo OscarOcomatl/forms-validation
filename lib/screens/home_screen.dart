@@ -13,7 +13,10 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView.builder( //El LVB va a crear los widgets cuando esten cerca de entrar a la pantalla y no los va a mantener todos activos
         itemCount: 10,
-        itemBuilder: (BuildContext context, int index) => const ProductCard()
+        itemBuilder: (BuildContext context, int index) => GestureDetector(
+          onTap: () => Navigator.pushNamed(context,'product'),
+          child: const ProductCard()
+        )
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add, color: Colors.white),
