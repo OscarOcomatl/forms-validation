@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:productos_app/screens/screens.dart';
+import 'package:productos_app/services/services.dart';
+import 'package:provider/provider.dart';
+                            
+                            // Anteriormente era MyApp
+void main() => runApp(const AppState()); // En este punto el AppState es el que debe estar en lo mas alto de la app
+                                        // y el AppState ya tiene como child a MyApp
 
-void main() => runApp(const MyApp());
+class AppState extends StatelessWidget {
+  const AppState({super.key});
+
+  // La intencion de hacerlo de esta forma es tener el AppState en nivel mas alto de la app
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProductsService())
+      ],
+      child: const MyApp(),
+    );
+  }
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
