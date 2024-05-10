@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:productos_app/providers/product_form_provider.dart';
-import 'package:productos_app/services/services.dart';
-import 'package:productos_app/widgets/widgets.dart';
+import 'package:flutter/services.dart';
+
 import 'package:provider/provider.dart';
+import 'package:productos_app/providers/product_form_provider.dart';
+
+import 'package:productos_app/services/services.dart';
+
+import 'package:productos_app/widgets/widgets.dart';
 
 class ProductScreen extends StatelessWidget {
   const ProductScreen({super.key});
@@ -20,29 +24,6 @@ class ProductScreen extends StatelessWidget {
     // return _ProductScreenBody(productService: productService);
   }
 
-  Positioned _cameraButton() {
-    return Positioned(// para ubicar en cierta posicion dentro del stack
-                top: 60,
-                right: 20,
-                child: IconButton(
-                  onPressed: () {
-                    // Camara o galeria
-                  },
-                  icon: const Icon(Icons.camera_alt_outlined, size: 50, color: Colors.white70,)
-                )
-              );
-  }
-
-  Positioned _backButton(BuildContext context) {
-    return Positioned(// para ubicar en cierta posicion dentro del stack
-                top: 60,
-                left: 20,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back_ios_new, size: 40, color: Colors.white70,)
-                )
-              );
-  }
 }
 
 class _ProductScreenBody extends StatelessWidget {
@@ -55,8 +36,12 @@ class _ProductScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final productForm = Provider.of<ProductFormProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView(
+        // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual , // Cuando se haga scroll se va a ocultar el teclado
         child: Column(
           children: [
             Stack(
@@ -84,17 +69,19 @@ class _ProductScreenBody extends StatelessWidget {
                 )
               ],
             ),
-            _ProductForm(),
-            SizedBox(height: 100,) //Para que el scroll pueda pasar despues del input
+            const _ProductForm(),
+            const SizedBox(height: 100,) //Para que el scroll pueda pasar despues del input
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () async {
           // TODO: Guardar producto
+          if( !productForm.isValidForm() ) return;
+          await productService.saveOrCreateProduct(productForm.product);
         },
-        child: Icon(Icons.save_outlined, color: Colors.white,),
+        child: const Icon(Icons.save_outlined, color: Colors.white,),
       ),
     );
   }
@@ -110,6 +97,7 @@ class _ProductForm extends StatelessWidget {
   Widget build(BuildContext context) {
   final productForm = Provider.of<ProductFormProvider>(context);
   final product = productForm.product;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -118,6 +106,8 @@ class _ProductForm extends StatelessWidget {
         // height: 200,
         decoration: _buildBoxDecoration(),
         child: Form(
+          key:productForm.formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               const SizedBox(height: 10),
@@ -136,6 +126,9 @@ class _ProductForm extends StatelessWidget {
               const SizedBox(height: 30,),
               TextFormField(
                 initialValue: '${product.price}',
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
+                ],
                 onChanged: (value) {
                   if(double.tryParse(value) == null){
                     product.price = 0;
@@ -143,10 +136,6 @@ class _ProductForm extends StatelessWidget {
                     product.price = double.parse(value);
                   }
                 },
-                // validator: (value) {
-                //   if(value == null || value.length < 1)
-                //     return 'El nombre es obligatorio';
-                // },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   hintText: '\$150',
@@ -158,9 +147,8 @@ class _ProductForm extends StatelessWidget {
                 value: product.available, 
                 title: const Text('Disponible'),
                 activeColor: Colors.indigo,
-                onChanged: (value) {
-                  //TODO: Pendiente
-                }
+                onChanged: productForm.updateAvailability,
+                // onChanged: (value) => productForm.updateAvailability(value)
                 ),
               const SizedBox(height: 30,)
             ],
