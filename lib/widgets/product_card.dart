@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:productos_app/models/models.dart';
 
@@ -186,19 +188,32 @@ class _BackgroundImage extends StatelessWidget {
       child: SizedBox( // Era un Container, verificar que no de problemas por el uso de SizedBox en vez de container
         width: double.infinity,
         height: 400,
-        child: url == null // Muestra la imagen de forma condicional, si viene un link lo muestra y si no, muestra un AssetImage
-          ? const Image(
-              image: AssetImage('assets/no-image.png'),
-              fit: BoxFit.cover,
-            )
-          : FadeInImage(
-              
-              placeholder: const AssetImage('assets/jar-loading.gif'),
-              image: NetworkImage(url!),
-              // image: NetworkImage('https://via.placeholder.com/400x300/f6f6f6'),
-              fit: BoxFit.contain
-            ),
+        child: url == null
+            ? const Image(
+                image: AssetImage('assets/no-image.png'), fit: BoxFit.cover)
+            : FadeInImage(
+                placeholder: const AssetImage('assets/jar-loading.gif'),
+                image: NetworkImage(url!),
+                fit: BoxFit.cover,
+              ),
       ),
+    );
+  }
+
+    Widget getImage(String? picture){
+  
+  if(picture == null)
+    return Image(image: AssetImage('assets/no-image.png'), fit: BoxFit.cover);
+  if(picture.startsWith('http')){
+      FadeInImage(
+        image: NetworkImage(url!),
+        placeholder: const AssetImage('assets/jar-loading.gif'),
+        fit: BoxFit.cover,
+      );
+    }
+    return Image.file(
+      File(picture),
+      fit: BoxFit.cover
     );
   }
 }
