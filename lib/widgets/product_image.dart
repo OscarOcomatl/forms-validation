@@ -11,10 +11,10 @@ class ProductImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Tratando de mostrar ur: $url');
+    // print('Tratando de mostrar ur: $url');
 
         return Padding(
-      padding: EdgeInsets.only( left: 10, right: 10, top: 10 ),
+      padding: const EdgeInsets.only( left: 10, right: 10, top: 10 ),
       child: Container(
         decoration: _buildBoxDecoration(),
         width: double.infinity,
@@ -22,38 +22,12 @@ class ProductImage extends StatelessWidget {
         child: Opacity(
           opacity: 0.9,
           child: ClipRRect(
-            borderRadius: BorderRadius.only( topLeft: Radius.circular( 45 ), topRight: Radius.circular(45) ),
+            borderRadius: const BorderRadius.only( topLeft: Radius.circular( 45 ), topRight: Radius.circular(45) ),
             child: getImage(url)
           ),
         ),
       ),
     );
-
-    // return Padding(
-    //   padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-    //   child: Container(
-    //     decoration: _buildBoxDecoration(),
-    //     width: double.infinity,
-    //     height: 450,
-    //     child: Opacity(
-    //       //Se agrega opacidad por si la imagen tiene fondo blanco
-    //       opacity: 0.85,
-    //       child: ClipRRect(
-    //         borderRadius: const BorderRadius.only(
-    //             topLeft: Radius.circular(45), topRight: Radius.circular(45)),
-    //         child: url == null
-    //             ? const Image(
-    //                 image: AssetImage('assets/no-image.png'), fit: BoxFit.cover)
-    //             : FadeInImage(
-    //                 placeholder: const AssetImage('assets/jar-loading.gif'),
-    //                 // image: NetworImageCache()kImage(url!),
-    //                 image: getImage(url),
-    //                 fit: BoxFit.cover,
-    //               ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 
   BoxDecoration _buildBoxDecoration() => BoxDecoration(
@@ -69,26 +43,24 @@ class ProductImage extends StatelessWidget {
 
 
   Widget getImage( String? picture ) {
-
-    if ( picture == null ) 
-      return Image(
+  
+    if ( picture == null ){
+      return const Image(
           image: AssetImage('assets/no-image.png'),
           fit: BoxFit.cover,
         );
+    } 
 
-    if ( picture.startsWith('http') ) 
+    if ( picture.startsWith('http') ){
         return FadeInImage(
-          image: NetworkImage( this.url! ),
-          placeholder: AssetImage('assets/jar-loading.gif'),
+          image: NetworkImage( url! ),
+          placeholder: const AssetImage('assets/jar-loading.gif'),
           fit: BoxFit.cover,
         );
-
-
+    } 
     return Image.file(
       File( picture ),
       fit: BoxFit.cover,
     );
   }
-
-
 }
