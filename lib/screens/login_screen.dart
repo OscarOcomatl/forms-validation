@@ -109,15 +109,19 @@ class _LoginForm extends StatelessWidget {
                 Navigator.pushReplacementNamed(context, 'home');
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                child: Text(
-                  loginForm.isLoading
-                  ? 'Espere'
-                  : 'Ingresar',
-                  style: const TextStyle(color: Colors.white),
+                padding: const EdgeInsets.symmetric(horizontal: 79, vertical: 15),
+                  child: Wrap(
+                    children: [
+                      Text(
+                      loginForm.isLoading
+                      ? 'Espere'
+                      : 'Ingresar',
+                      style: const TextStyle(color: Colors.white,fontSize: 14),
+                    ),
+                    ]
+                  ),
                 ),
               ),
-            )
           ],
         ),
       ),
