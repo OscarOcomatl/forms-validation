@@ -14,6 +14,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final productsService = Provider.of<ProductsService>(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
     
 
     if(productsService.isLoading) return const LoadingScreen();
@@ -21,6 +22,16 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Productos'),
+        // leading: IconButton(onPressed: (){}, icon: Icon(Icons.logout_outlined)), // Por si se quiere dejar de lado izquierdo
+        actions: [ 
+          IconButton(
+            icon: const Icon(Icons.logout_rounded, color: Colors.white,),
+            onPressed: () async {
+              await authService.logout();
+              Navigator.pushReplacementNamed(context, 'login'); // Automaticamente destruye el stack de screens y regresa a la que especificamos
+            },
+          ),
+        ]
       ),
       body: ListView.builder( //El LVB va a crear los widgets cuando esten cerca de entrar a la pantalla y no los va a mantener todos activos
         itemCount: productsService.products.length,

@@ -37,8 +37,12 @@ class MyApp extends StatelessWidget {
         'login'   : ( _ ) => const LoginScreen(),
         'home'    : ( _ ) => const HomeScreen(),
         'product' : ( _ ) => const ProductScreen(),
-        'register': ( _ ) => const RegisterScreen()
+        'register': ( _ ) => const RegisterScreen(),
+        'checking': ( _ ) => const CheckAuthScreen() 
       },
+      // En cualquier lado de la aplicacion, usando los metodos del NotificationsService
+      // se tiene accesso al scaffold
+      scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: Colors.grey[300],
         appBarTheme: const AppBarTheme(

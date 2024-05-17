@@ -11,14 +11,15 @@ class AuthService extends ChangeNotifier {
   final String _baseUrl = 'identitytoolkit.googleapis.com';
   final String _firebaseToken = 'AIzaSyAUtDd3HQCb7IDGv5pTIKsmUlhLjTQXFtk'; // Token de acceso a la api de firebase
 
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   // Si retornamos algo es un error si no todo bien
   Future<String?> createUser(String email, String password) async {
     //Para mandr inforacion a un POST, hay que mandarlo como mapa y despues serializarlo como mapa
     final Map<String,dynamic> authData = {
-      'email'     :   email,
-      'password'  :   password
+      'email'             :   email,
+      'password'          :   password,
+      'returnSecureToken' :   true
     };
 
     final url = Uri.https(_baseUrl, '/v1/accounts:signUp', {
@@ -44,7 +45,8 @@ Future<String?> login(String email, String password) async {
     //Para mandr inforacion a un POST, hay que mandarlo como mapa y despues serializarlo como mapa
     final Map<String,dynamic> authData = {
       'email'     :   email,
-      'password'  :   password
+      'password'  :   password,
+      'returnSecureToken' :   true
     };
 
     final url = Uri.https(_baseUrl, '/v1/accounts:signInWithPassword', {
@@ -53,7 +55,7 @@ Future<String?> login(String email, String password) async {
 
     final resp = await http.post(url, body: json.encode(authData));
     final Map<String,dynamic> decodedResp = json.decode(resp.body);
-    print(decodedResp);
+    // print(decodedResp);
     if(decodedResp.containsKey('idToken')){
       //Token hay que guardarlo en un lugar seguro
       await storage.write(key: 'token', value: decodedResp['idToken']);
@@ -67,6 +69,10 @@ Future<String?> login(String email, String password) async {
   Future logout() async {
     await storage.delete(key: 'token');
     return;
+  }
+
+  Future<String> readToken() async {
+    return await storage.read(key: 'token') ?? '';
   }
   
 }
